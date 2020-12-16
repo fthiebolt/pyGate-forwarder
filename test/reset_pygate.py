@@ -16,7 +16,16 @@
 #
 import sys
 import time
-import Jetson.GPIO as GPIO
+# GPIO @ RPi
+try:
+    import RPi.GPIO as GPIO
+except:
+    pass
+# GPIO @ Nvidia Jetson Nano
+try:
+    import Jetson.GPIO as GPIO
+except:
+    pass
 
 
 # #############################################################################
