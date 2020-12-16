@@ -1,0 +1,10 @@
+{
+    "gateway_conf": {
+        "gateway_ID": "0080b827ebd3146c",
+        "server_address": "neocampus.univ-tlse3.fr",
+        "serv_port_up": 1680,
+        "serv_port_down": 1680,
+        "push_timeout_ms": 250
+    }
+}
+
