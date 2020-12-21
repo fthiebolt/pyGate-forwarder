@@ -6,6 +6,8 @@
 # Notes:
 # - PyGate resets is about sx1308 and SX1257. These chips use a *positive* reset
 #
+# F.Thiebolt    Dec.20  inverted GPIO4 due to the transistor that drives
+#                       the PyGate's SX1xxx_RST lines on Jetson Nano (no transistor for RPi)
 # F.Thiebolt    Nov.20  initial release
 #
 
@@ -16,14 +18,23 @@
 #
 import sys
 import time
-# GPIO @ RPi
+
+rst_initial_value = None
+# GPIO @ Nvidia Jetson Nano
+# [dec.20] note that RPi.GPIO also exists on Jetson !
 try:
-    import RPi.GPIO as GPIO
+    if rst_initial_value is None:
+        import Jetson.GPIO as GPIO
+        print("Jetson Nano detected ...")
+        rst_initial_value=GPIO.HIGH
 except:
     pass
-# GPIO @ Nvidia Jetson Nano
+# GPIO @ RPi
 try:
-    import Jetson.GPIO as GPIO
+    if rst_initial_value is None:
+        import RPi.GPIO as GPIO
+        print("RPi detected ...")
+        rst_initial_value=GPIO.LOW
 except:
     pass
 
@@ -50,10 +61,10 @@ def main():
     GPIO.setmode(GPIO.BCM)  # BCM pin-numbering scheme from Raspberry Pi
 
     # set pin as an output pin with optional initial state of LOW
-    GPIO.setup(reset_pin, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(reset_pin, GPIO.OUT, initial=rst_initial_value)
 
     #print(f"{_measureTime}  Topic: {topic:>32}  Payload: {payload}" )
-    print(f"Now about to start PyGate chips reset with pin {reset_pin} ...")
+    print(f"Now about to reset PyGate's SX1308 & SX1257 with GPIO {reset_pin} and initial value as {rst_initial_value} ...")
     time.sleep(0.5)
 
     try:
