@@ -25,8 +25,11 @@ rst_initial_value = None
 try:
     if rst_initial_value is None:
         import Jetson.GPIO as GPIO
+        #import RPi.GPIO as GPIO
         print("Jetson Nano detected ...")
-        rst_initial_value=GPIO.HIGH
+        # initial value for RST line
+        rst_initial_value=GPIO.LOW     # buffer or direct connexion
+        #rst_initial_value=GPIO.HIGH     # transistor
 except:
     pass
 # GPIO @ RPi
@@ -66,11 +69,12 @@ def main():
     #print(f"{_measureTime}  Topic: {topic:>32}  Payload: {payload}" )
     print(f"Now about to reset PyGate's SX1308 & SX1257 with GPIO {reset_pin} and initial value as {rst_initial_value} ...")
     time.sleep(0.5)
+    #time.sleep(5)
 
     try:
         # invert
         GPIO.output(reset_pin, not(GPIO.input(reset_pin)))
-        time.sleep(0.5)
+        time.sleep(2)
 
         # back to original state
         GPIO.output(reset_pin, not(GPIO.input(reset_pin)))
