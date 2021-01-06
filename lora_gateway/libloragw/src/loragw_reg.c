@@ -14,6 +14,10 @@ Description:
 
 License: Revised BSD License, see LICENSE.TXT file include in the project
 Maintainer: Sylvain Miermont
+
+===
+Dec.20  F.Thiebolt  removed FPGA part from lgw_connect and force a software reset
+===
 */
 
 
@@ -500,11 +504,16 @@ int reg_r_align32(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target
 /* -------------------------------------------------------------------------- */
 /* --- PUBLIC FUNCTIONS DEFINITION ------------------------------------------ */
 
-/* Concentrator connect */
+/* Concentrator connect
+ * [dec.20] removed the FPGA test part and force software reset
+ * ... hence spi_only parameter is not anymore relevant !
+ */
 int lgw_connect(bool spi_only, uint32_t tx_notch_freq) {
     int spi_stat = LGW_SPI_SUCCESS;
     uint8_t u = 0;
     int x;
+
+    DEBUG_MSG("[dec.20] spi_only parameter is no more relevant!");
 
     /* check SPI link status */
     if (lgw_spi_target != NULL) {
@@ -523,55 +532,24 @@ int lgw_connect(bool spi_only, uint32_t tx_notch_freq) {
     lgw_spi_w(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0, 0x80); /* 1 -> SOFT_RESET bit */
     lgw_regpage = 0; /* reset the paging static variable */
 
-    if (spi_only == false ) {
-        /* Detect if the gateway has an FPGA with SPI mux header support */
-        /* First, we assume there is an FPGA, and try to read its version */
-        spi_stat = lgw_spi_r(lgw_spi_target, LGW_SPI_MUX_MODE1, LGW_SPI_MUX_TARGET_FPGA, loregs[LGW_VERSION].addr, &u);
-        if (spi_stat != LGW_SPI_SUCCESS) {
-            DEBUG_MSG("ERROR READING VERSION REGISTER\n");
-            return LGW_REG_ERROR;
-        }
-        if (check_fpga_version(u) != true) {
-            /* We failed to read expected FPGA version, so let's assume there is no FPGA */
-            DEBUG_PRINTF("INFO: no FPGA detected or version not supported (v%u)\n", u);
-            lgw_spi_mux_mode = LGW_SPI_MUX_MODE0;
-        } else {
-            DEBUG_PRINTF("INFO: detected FPGA with SPI mux header (v%u)\n", u);
-            lgw_spi_mux_mode = LGW_SPI_MUX_MODE1;
-            /* FPGA Soft Reset */
-            lgw_spi_w(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_FPGA, 0, 1);
-            lgw_spi_w(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_FPGA, 0, 0);
-            /* FPGA configure */
-            x = lgw_fpga_configure(tx_notch_freq);
-            if (x != LGW_REG_SUCCESS) {
-                DEBUG_MSG("ERROR CONFIGURING FPGA\n");
-                return LGW_REG_ERROR;
-            }
-        }
+    /* check SX1301 version */
+    spi_stat = lgw_spi_r(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, loregs[LGW_VERSION].addr, &u);
+    if (spi_stat != LGW_SPI_SUCCESS) {
+        DEBUG_MSG("ERROR READING CHIP VERSION REGISTER\n");
+        return LGW_REG_ERROR;
+    }
+    if (u != loregs[LGW_VERSION].dflt) {
+        DEBUG_PRINTF("ERROR: NOT EXPECTED CHIP VERSION (v%u)\n", u);
+        return LGW_REG_ERROR;
+    }
 
-        DEBUG_MSG("Performs SOFT RESET ...\n");
-        lgw_spi_w(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0, 0x80); /* 1 -> SOFT_RESET bit */
-        lgw_regpage = 0; /* reset the paging static variable */
-
-        /* check SX1301 version */
-        spi_stat = lgw_spi_r(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, loregs[LGW_VERSION].addr, &u);
-        if (spi_stat != LGW_SPI_SUCCESS) {
-            DEBUG_MSG("ERROR READING CHIP VERSION REGISTER\n");
-            return LGW_REG_ERROR;
-        }
-        if (u != loregs[LGW_VERSION].dflt) {
-            DEBUG_PRINTF("ERROR: NOT EXPECTED CHIP VERSION (v%u)\n", u);
-            return LGW_REG_ERROR;
-        }
-
-        /* write 0 to the page/reset register */
-        spi_stat = lgw_spi_w(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, loregs[LGW_PAGE_REG].addr, 0);
-        if (spi_stat != LGW_SPI_SUCCESS) {
-            DEBUG_MSG("ERROR WRITING PAGE REGISTER\n");
-            return LGW_REG_ERROR;
-        } else {
-            lgw_regpage = 0;
-        }
+    /* write 0 to the page/reset register */
+    spi_stat = lgw_spi_w(lgw_spi_target, lgw_spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, loregs[LGW_PAGE_REG].addr, 0);
+    if (spi_stat != LGW_SPI_SUCCESS) {
+        DEBUG_MSG("ERROR WRITING PAGE REGISTER\n");
+        return LGW_REG_ERROR;
+    } else {
+        lgw_regpage = 0;
     }
 
     DEBUG_MSG("Note: success connecting the concentrator\n");
