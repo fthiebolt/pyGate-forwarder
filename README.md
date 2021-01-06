@@ -8,6 +8,14 @@ Note: for an unknown reason, Jetson Nano failed to discuss with PyGate using SPI
 Both 'lora_gateway' and 'packet_forwarder' are forks from Semtech version (https://github.com/Lora-net/lora_gateway https://github.com/Lora-net/packet_forwarder)
 
 ### Compilation ###
+```
+cd lora_gateway
+make
+```
+```
+cd packet_fowarder
+make
+```
 
 TO BE CONTINUED
 

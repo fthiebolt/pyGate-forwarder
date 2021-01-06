@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script is a helper to update the Gateway_ID field of given
 # JSON configuration file, as a EUI-64 address generated from the 48-bits MAC
@@ -7,25 +7,46 @@
 # Usage examples:
 #       ./update_gwid.sh ./local_conf.json
 
-iot_sk_update_gwid() {
+
+#
+# vars
+local_conf_file="${1:-local_conf.json}"
+[ -f ${local_conf_file} ] || { echo -s "\n###ERROR: unable to find json config file ${local_conf_file} ... aborting :(" >&2; exit 1; }
+gwid=""
+
+
+#
+# functions
+
+# returns a new GWID derived from host's mac address
+get_gwid() {
     # get gateway ID from its MAC address to generate an EUI-64 address
-    GWID_MIDFIX="FFFE"
-    GWID_BEGIN=$(ip link show eth0 | awk '/ether/ {print $2}' | awk -F\: '{print $1$2$3}')
-    GWID_END=$(ip link show eth0 | awk '/ether/ {print $2}' | awk -F\: '{print $4$5$6}')
+    GWID_PREFIX="FFFE"
+    GWID_MAC=$(ip link show eth0 | awk '/ether/ {print $2}' | awk -F\: '{print $1$2$3$4$5$6}')
 
-    # replace last 8 digits of default gateway ID by actual GWID, in given JSON configuration file
-    sed -i 's/\(^\s*"gateway_ID":\s*"\).\{16\}"\s*\(,\?\).*$/\1'${GWID_BEGIN}${GWID_MIDFIX}${GWID_END}'"\2/' $1
+    gwid="${GWID_PREFIX}${GWID_MAC}"
 
-    echo "Gateway_ID set to "$GWID_BEGIN$GWID_MIDFIX$GWID_END" in file "$1
+    #echo -e "in get_gwid, gwid = ${gwid}"
+
+    return 0
 }
 
-if [ $# -ne 1 ]
-then
-    echo "Usage: $0 [filename]"
-    echo "  filename: Path to JSON file containing Gateway_ID for packet forwarder"
-    exit 1
-fi 
 
-iot_sk_update_gwid $1
+#
+# main
+echo -e "\n=== [packet_forwarder] Gateway_ID setup ==="
 
-exit 0
+get_gwid >& /dev/null
+[ $? -ne 0 ] && { echo -e "\n###ERROR: unable to generate new Gateway_ID ?!?! aborting :(" >&2; exit 1; }
+[ ${#gwid} -ne 16 ] && { echo -e "\n###ERROR: gwid (${gwid}) length does not match our requirements ... aborting :(" >&2; exit 1; }
+
+echo -ne "\tupdating '${local_conf_file}' file with new GATEWAY_ID = ${gwid}\n\tOK[y/N]?: "
+read -e -n 1 answer
+[ "X${answer,,}" != "Xy" ] && { echo -e "Operation cancelled !"; exit 0; }
+
+
+# replace last 8 digits of default gateway ID by actual GWID, in given JSON configuration file
+sed -i 's/\(^\s*"gateway_ID":\s*"\).\{16\}"\s*\(,\?\).*$/\1'${gwid}'"\2/' ${local_conf_file}
+
+echo "Gateway_ID set to ${gwid} in file '${local_conf_file}'"
+
