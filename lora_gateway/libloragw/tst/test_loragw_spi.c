@@ -56,7 +56,7 @@ int main()
 
 
     /* performs software reset */
-printf("Performs software reset");
+    printf("Performs software reset");
     lgw_spi_w(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0x00, 0x80);
 
 
@@ -95,12 +95,32 @@ for( uint8_t i=0; i<16; i++ )
 printf("\n");
 //return 0;
 
+    /* 16b unsigned */
+    uint16_t rvalue = (uint16_t)(-1);
+    uint16_t wvalue = 0x03E5;
+    //lgw_reg_w(LGW_PREAMBLE_SYMB1_NB, test_value);
+    lgw_spi_wb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 96, &wvalue, 2);
+    //lgw_reg_r(LGW_PREAMBLE_SYMB1_NB, &read_value);
+    lgw_spi_rb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 96, &rvalue, 2);
+    printf("PREAMBLE_SYMB1_NB = 0x%04X (should be 0x%04X)\n", rvalue, wvalue);
 
     /* burst R/W test, large bursts >> LGW_BURST_CHUNK */
     for (i = 0; i < TIMING_REPEAT; ++i)
         lgw_spi_wb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0x5A, dataout, ARRAY_SIZE(dataout));
     for (i = 0; i < TIMING_REPEAT; ++i)
         lgw_spi_rb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0x5A, datain, ARRAY_SIZE(datain));
+    /* 5A is not relevant for large transferts ?!?!
+    printf("\nLarge bursts tests ...\n");
+    for( i=0; i<16; i++ ) {
+        printf("0x%02X(0x%02X) ", datain[i], dataout[i]);
+    }
+    for( i=0; i<BURST_TEST_SIZE; i++ ) {
+        if( datain[i] != dataout[i] ) {
+            printf("\n###ERROR: datain buffer does not match dataout buffer (i=%d) !\n", i);
+            break;
+        }
+    }
+    */
 
     /* last read (blocking), just to be sure no to quit before the FTDI buffer is flushed */
     lgw_spi_r(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0x55, &data);

@@ -59,7 +59,7 @@ int main()
     //lgw_reg_w(LGW_SOFT_RESET, 1);
     lgw_reg_check(stdout);
 
-return 0;
+//return 0;
 
     /* --- READ/WRITE COHERENCY TEST --- */
 

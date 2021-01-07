@@ -201,6 +201,8 @@ int load_firmware(uint8_t target, uint8_t *firmware, uint16_t size) {
     }
 
     /* reset the targeted MCU */
+    //printf("Performs software reset");
+    //lgw_soft_reset();
     lgw_reg_w(reg_rst, 1);
 
     /* set mux to access MCU program RAM and set address to 0 */
@@ -214,7 +216,17 @@ int load_firmware(uint8_t target, uint8_t *firmware, uint16_t size) {
     lgw_reg_r( LGW_MCU_PROM_DATA, &dummy ); /* bug workaround */
     lgw_reg_rb( LGW_MCU_PROM_DATA, fw_check, size );
     if (memcmp(firmware, fw_check, size) != 0) {
-        printf ("ERROR: Failed to load fw %d\n", (int)target);
+        printf ("ERROR: Failed to load fw(%d byes) on target %d \n", (int)size, (int)target);
+        for( uint8_t line=0; line<1; line++ ) {
+            for( uint8_t row=0; row<16; row++ ) {
+                printf("0x%02X ", firmware[line*16+row]);
+            }
+            printf("\n");
+            for( uint8_t row=0; row<16; row++ ) {
+                printf("0x%02X ", fw_check[line*16+row]);
+            }
+            printf("\n");
+        }
         return -1;
     }
 
