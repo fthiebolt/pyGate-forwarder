@@ -53,12 +53,13 @@ int main()
 
     printf("Beginning of test for loragw_spi.c\n");
     lgw_spi_open(&spi_target);
+    sleep(1);
 
 
     /* performs software reset */
-    printf("Performs software reset");
+    printf("Performs software reset\n");
     lgw_spi_w(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0x00, 0x80);
-
+    sleep(1);
 
     /* read chip version */
     for (i = 0; i < TIMING_REPEAT; ++i) {
@@ -73,7 +74,7 @@ int main()
 
 
     /* normal R/W test */
-
+/*
 //    for (i = 0; i < TIMING_REPEAT; ++i)
 //        lgw_spi_w(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0xAA, 0x96);
     for (i = 0; i < TIMING_REPEAT; ++i)
@@ -81,9 +82,20 @@ int main()
 
 printf("data received (simple read): 0x%0X\n",data);
 //return 0;
+*/
+
+    /* 16b unsigned */
+    uint16_t rvalue = (uint16_t)(-1);
+    uint16_t wvalue = 0x03E5;
+    //lgw_reg_w(LGW_PREAMBLE_SYMB1_NB, test_value);
+    lgw_spi_wb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 96, &wvalue, 2);
+    //lgw_reg_r(LGW_PREAMBLE_SYMB1_NB, &read_value);
+    lgw_spi_rb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 96, &rvalue, 2);
+    printf("PREAMBLE_SYMB1_NB = 0x%04X (should be 0x%04X)\n", rvalue, wvalue);
 
 
     /* burst R/W test, small bursts << LGW_BURST_CHUNK */
+
 //    for (i = 0; i < TIMING_REPEAT; ++i)
 //        lgw_spi_wb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0x55, dataout, 16);
     for (i = 0; i < TIMING_REPEAT; ++i)
@@ -95,14 +107,8 @@ for( uint8_t i=0; i<16; i++ )
 printf("\n");
 //return 0;
 
-    /* 16b unsigned */
-    uint16_t rvalue = (uint16_t)(-1);
-    uint16_t wvalue = 0x03E5;
-    //lgw_reg_w(LGW_PREAMBLE_SYMB1_NB, test_value);
-    lgw_spi_wb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 96, &wvalue, 2);
-    //lgw_reg_r(LGW_PREAMBLE_SYMB1_NB, &read_value);
-    lgw_spi_rb(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 96, &rvalue, 2);
-    printf("PREAMBLE_SYMB1_NB = 0x%04X (should be 0x%04X)\n", rvalue, wvalue);
+ return 0;
+
 
     /* burst R/W test, large bursts >> LGW_BURST_CHUNK */
     for (i = 0; i < TIMING_REPEAT; ++i)
