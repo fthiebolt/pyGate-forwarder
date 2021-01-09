@@ -1,11 +1,13 @@
 # pyGate-forwarder
-[eCOnect] PyGate packet forwarder while SPI connected to a Jetson Nano
+[eCOnect] (great)PyGate as a (cheap) true 8 channels LoRaWAN packet forwarder: we directly connected our Nvidia Jetson Nano to the PyGate board through SPI bus.
 
-Note: for an unknown reason, Jetson Nano failed to discuss with PyGate using SPI bus (while it perfectly work on RPi ?!?!)
-... hence we have had to modify the `lgw_connect` fonction to remove the useless FPGA part and to set software reset of the SX1308
+![](Jetson-nano-PyGate-interco_dec20.jpg)
+
+However, while this works seamlessly when connecting a RPi to a PyGate, it turns out to a total mess on Jetson nano ?!?!
+**spoiler** the reason lies in the fact that SPI on nano does not releases the CS line ... thus SX1308 still waits before executing the received write operation!
 
 ## Getting started ##
-Both 'lora_gateway' and 'packet_forwarder' are forks from Semtech version (https://github.com/Lora-net/lora_gateway https://github.com/Lora-net/packet_forwarder)
+As a side note, both 'lora_gateway' and 'packet_forwarder' are forks from Semtech version (https://github.com/Lora-net/lora_gateway https://github.com/Lora-net/packet_forwarder)
 
 ### Compilation ###
 ```
@@ -19,8 +21,6 @@ This stems from a bug in SPI driver.
 cd packet_fowarder
 make
 ```
-
-TO BE CONTINUED
 
 ### Gateway setup ###
 
