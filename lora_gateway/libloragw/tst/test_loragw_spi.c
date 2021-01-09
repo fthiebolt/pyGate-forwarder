@@ -20,6 +20,7 @@ Maintainer: Sylvain Miermont
 
 #include <stdint.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "loragw_spi.h"
 
@@ -59,7 +60,7 @@ int main()
     /* performs software reset */
     printf("Performs software reset\n");
     lgw_spi_w(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0x00, 0x80);
-    sleep(1);
+    usleep(5000);   // 5ms
 
     /* read chip version */
     for (i = 0; i < TIMING_REPEAT; ++i) {
@@ -74,7 +75,7 @@ int main()
 
 
     /* normal R/W test */
-/*
+
 //    for (i = 0; i < TIMING_REPEAT; ++i)
 //        lgw_spi_w(spi_target, spi_mux_mode, LGW_SPI_MUX_TARGET_SX1301, 0xAA, 0x96);
     for (i = 0; i < TIMING_REPEAT; ++i)
@@ -82,7 +83,7 @@ int main()
 
 printf("data received (simple read): 0x%0X\n",data);
 //return 0;
-*/
+
 
     /* 16b unsigned */
     uint16_t rvalue = (uint16_t)(-1);
@@ -106,8 +107,6 @@ for( uint8_t i=0; i<16; i++ )
   printf("0x%0X ",datain[i]);
 printf("\n");
 //return 0;
-
- return 0;
 
 
     /* burst R/W test, large bursts >> LGW_BURST_CHUNK */

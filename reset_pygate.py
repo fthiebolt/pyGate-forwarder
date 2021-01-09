@@ -28,8 +28,8 @@ try:
         #import RPi.GPIO as GPIO
         print("Jetson Nano detected ...")
         # initial value for RST line
-        rst_initial_value=GPIO.LOW     # buffer or direct connexion
-        #rst_initial_value=GPIO.HIGH     # transistor
+        #rst_initial_value=GPIO.LOW     # buffer or direct connexion
+        rst_initial_value=GPIO.HIGH     # transistor
 except:
     pass
 # GPIO @ RPi

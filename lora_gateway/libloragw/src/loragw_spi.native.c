@@ -54,8 +54,8 @@ Maintainer: Sylvain Miermont
 #define READ_ACCESS     0x00
 #define WRITE_ACCESS    0x80
 // [Dec.20] François change SPI bus frequency here
-//#define SPI_SPEED       8000000
-#define SPI_SPEED       500000
+#define SPI_SPEED       8000000
+//#define SPI_SPEED       500000
 #define SPI_DEV_PATH    "/dev/spidev0.0"
 //#define SPI_DEV_PATH    "/dev/spidev32766.0"
 
@@ -195,7 +195,8 @@ int lgw_spi_w(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, ui
     k.tx_buf = (unsigned long) out_buf;
     k.len = command_size;
     k.speed_hz = SPI_SPEED;
-    k.cs_change = 0;
+    k.cs_change = 1;
+    //k.cs_change = 0;
     k.bits_per_word = 8;
     a = ioctl(spi_device, SPI_IOC_MESSAGE(1), &k);
 
@@ -246,7 +247,8 @@ int lgw_spi_r(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, ui
     k.tx_buf = (unsigned long) out_buf;
     k.rx_buf = (unsigned long) in_buf;
     k.len = command_size;
-    k.cs_change = 0;
+    k.cs_change = 1;
+    //k.cs_change = 0;
     a = ioctl(spi_device, SPI_IOC_MESSAGE(1), &k);
 
     /* determine return code */
@@ -256,6 +258,7 @@ int lgw_spi_r(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, ui
     } else {
         DEBUG_MSG("Note: SPI read success\n");
         *data = in_buf[command_size - 1];
+
         return LGW_SPI_SUCCESS;
     }
 }
@@ -300,8 +303,10 @@ int lgw_spi_wb(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, u
     memset(&k, 0, sizeof(k)); /* clear k */
     k[0].tx_buf = (unsigned long) &command[0];
     k[0].len = command_size;
-    k[0].cs_change = 0;
-    k[1].cs_change = 0;
+    k[0].cs_change = 1;
+    //k[0].cs_change = 0;
+    k[1].cs_change = 1;
+    //k[1].cs_change = 0;
     for (i=0; size_to_do > 0; ++i) {
         chunk_size = (size_to_do < LGW_BURST_CHUNK) ? size_to_do : LGW_BURST_CHUNK;
         offset = i * LGW_BURST_CHUNK;
@@ -362,8 +367,10 @@ int lgw_spi_rb(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, u
     memset(&k, 0, sizeof(k)); /* clear k */
     k[0].tx_buf = (unsigned long) &command[0];
     k[0].len = command_size;
-    k[0].cs_change = 0;
-    k[1].cs_change = 0;
+    k[0].cs_change = 1;
+    //k[0].cs_change = 0;
+    k[1].cs_change = 1;
+    //k[1].cs_change = 0;
     for (i=0; size_to_do > 0; ++i) {
         chunk_size = (size_to_do < LGW_BURST_CHUNK) ? size_to_do : LGW_BURST_CHUNK;
         offset = i * LGW_BURST_CHUNK;
