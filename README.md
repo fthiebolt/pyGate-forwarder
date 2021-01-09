@@ -12,6 +12,9 @@ Both 'lora_gateway' and 'packet_forwarder' are forks from Semtech version (https
 cd lora_gateway
 make
 ```
+**WARNING** on Nvidia Jetson Nano, you ought to use `make CFLAGS=-DNVIDIA_CS_WORKAROUND`
+This stems from a bug in SPI driver.
+
 ```
 cd packet_fowarder
 make

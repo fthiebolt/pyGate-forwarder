@@ -197,6 +197,7 @@ int lgw_spi_w(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, ui
     k.speed_hz = SPI_SPEED;
     k.cs_change = 0;
 #ifdef NVIDIA_CS_WORKAROUND
+#pragma message "NVIDIA SPI CS WORKAROUND ACTIVATED"
     k.cs_change = 1;
 #endif /* NVIDIA_CS_WORKAROUND */
     k.bits_per_word = 8;
