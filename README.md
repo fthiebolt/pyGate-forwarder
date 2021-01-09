@@ -4,10 +4,11 @@
 ![](Jetson-nano-PyGate-interco_dec20.jpg)
 
 However, while this works seamlessly when connecting a RPi to a PyGate, it turns out to a total mess on Jetson nano ?!?!
-**spoiler** the reason lies in the fact that SPI on nano does not releases the CS line ... thus SX1308 still waits before executing the received write operation!
+
+**SPOILER**: the reason lies in the fact that SPI on nano does not releases the CS line ... thus SX1308 still waits before executing the received write operation!
 
 ## Getting started ##
-As a side note, both 'lora_gateway' and 'packet_forwarder' are forks from Semtech version (https://github.com/Lora-net/lora_gateway https://github.com/Lora-net/packet_forwarder)
+Reminder: both 'lora_gateway' and 'packet_forwarder' are forks from Semtech version (https://github.com/Lora-net/lora_gateway https://github.com/Lora-net/packet_forwarder)
 
 ### Compilation ###
 ```
@@ -23,14 +24,26 @@ make
 ```
 
 ### Gateway setup ###
+```
+cd packet_fowarder/lora_pkt_fwd
+cp ~/pyGate-forwarder/*.json .
+./update_gwid.sh
+```
+The `update_gwid.sh` script will generate a new LoRaWAN gateway mac address and update json local file.
 
-TO BE CONTINUED
+  * It's now time for you to modifiy this local file to head your packet forwarder to your LoRaWAN server
+
+  * You ought now to add this new gateway to your LoRaWAN server (we make use of **gotthardp** version https://github.com/gotthardp/lorawan-server)
 
 ### packet_forwarder start :) ###
 [*MANDATORY*] Reset the board
 ```
 ./reset_pygate.py
 ```
+... then start packet forwarder
+```
+cd packet_forwarder/lora_pkt_fwd
+./lora_pkt_fwd
+```
 
-TO BE CONTINUED
-
+and TADA, it works! (at least it ought to ;)
