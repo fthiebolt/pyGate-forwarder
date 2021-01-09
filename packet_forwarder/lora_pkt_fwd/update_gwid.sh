@@ -48,5 +48,7 @@ read -e -n 1 answer
 # replace last 8 digits of default gateway ID by actual GWID, in given JSON configuration file
 sed -i 's/\(^\s*"gateway_ID":\s*"\).\{16\}"\s*\(,\?\).*$/\1'${gwid}'"\2/' ${local_conf_file}
 
-echo "Gateway_ID set to ${gwid} in file '${local_conf_file}'"
+echo -e "Gateway_ID set to ${gwid} in file '${local_conf_file}'"
+echo -e "\tupdate lorawan server definition with this new gateway ..."
+echo -e "\n\t... then launch packet forwarder: ./lora_pkt_fwd"
 
