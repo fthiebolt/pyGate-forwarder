@@ -1,6 +1,6 @@
 # pyGate-forwarder
 [eCOnect] is a European project about biodiversity study in Occitanie (south of France). We'll deploy sensors across large areas and we need a (cheap) way to gather all the data: **LoRaWAN :)**
-To achieve this, we make use of the (great)PyGate boards as a (cheap) true 8 channels LoRaWAN packet forwarder: we directly connected our Nvidia Jetson Nano to the PyGate board through SPI bus.
+To achieve this, we make use of the (great)PyGate boards (https://pycom.io/product/pygate/) as a (cheap) true 8 channels LoRaWAN packet forwarder: we directly connected our Nvidia Jetson Nano to the PyGate board through SPI bus.
 
 ![Jetson Nano SPI connected to a PyGate](Jetson-nano-PyGate-interco_dec20.jpg)
 
