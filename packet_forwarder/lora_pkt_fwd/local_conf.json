@@ -4,6 +4,8 @@
         "server_address": "neocampus.univ-tlse3.fr",
         "serv_port_up": 1680,
         "serv_port_down": 1680,
+        "stat_interval": 60,
+        "keepalive_interval": 30,
         "push_timeout_ms": 250
     }
 }

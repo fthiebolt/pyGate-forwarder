@@ -27,7 +27,7 @@ make
 ### Gateway setup ###
 ```
 cd packet_fowarder/lora_pkt_fwd
-cp ~/pyGate-forwarder/*.json .
+cp ~/pyGate-forwarder/{global,local}_conf.json .
 ./update_gwid.sh
 ```
 The `update_gwid.sh` script will generate a new LoRaWAN gateway mac address and update json local file.
