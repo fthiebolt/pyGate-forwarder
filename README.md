@@ -2,7 +2,7 @@
 [eCOnect] is a European project about biodiversity study in Occitanie (south of France). We'll deploy sensors across large areas and we need a (cheap) way to gather all the data: **LoRaWAN :)**
 To achieve this, we make use of the (great)PyGate boards (https://pycom.io/product/pygate/) as a (cheap) true 8 channels LoRaWAN packet forwarder: we directly connected our Nvidia Jetson Nano to the PyGate board through SPI bus.
 
-![Jetson Nano SPI connected to a PyGate](Jetson-nano-PyGate-interco_dec20.jpg)
+![Jetson Nano SPI connected to a PyGate](pics/Jetson-nano-PyGate-interco_dec20.jpg)
 
 However, while this works seamlessly when connecting a RPi to a PyGate, it turns out to a total mess on Jetson nano ?!?!
 
@@ -49,7 +49,7 @@ cd packet_forwarder/lora_pkt_fwd
 
 and TADA, it works! (at least it ought to ;)
 
-![nano-pygate connected to our LoRaWAN server](Jetson-nano-PyGate-lorawan-server_jan21.jpg)
+![nano-pygate connected to our LoRaWAN server](pics/Jetson-nano-PyGate-lorawan-server_jan21.jpg)
 
 ### systemd service ###
 We'd like to have our packet forwarder to get launch as a systemd service
