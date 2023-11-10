@@ -11,6 +11,9 @@ fi
 
 set -x
 
+# [dec.22] removed StrictHostKey checking
+export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+
 #git remote set-url origin https://github.com/fthiebolt/pyGate-forwarder.git
 git add --all
 git commit -a -m "${msg}"

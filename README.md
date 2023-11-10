@@ -17,7 +17,7 @@ cd lora_gateway
 make
 ```
 **WARNING** on Nvidia Jetson Nano, you ought to use `make CFLAGS=-DNVIDIA_CS_WORKAROUND`
-This stems from a bug in SPI driver.
+This stems from a bug in the SPI driver.
 
 ```
 cd packet_fowarder
@@ -50,3 +50,12 @@ cd packet_forwarder/lora_pkt_fwd
 and TADA, it works! (at least it ought to ;)
 
 ![nano-pygate connected to our LoRaWAN server](Jetson-nano-PyGate-lorawan-server_jan21.jpg)
+
+### systemd service ###
+We'd like to have our packet forwarder to get launch as a systemd service
+```
+./deploy.sh
+```
+To launch the service `systemctm enable --now lora_pkt_fwd.service`
+
+
