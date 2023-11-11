@@ -3,7 +3,11 @@
 # Deploy project as a systemd service
 #
 #   Note: we'll set the service file in /etc/<subdir>
-#
+# ===
+# Links
+#   - https://superuser.com/questions/1581577/running-two-tmux-sessions-as-systemd-service
+#   - https://www.tecmint.com/create-systemd-service-linux/
+# ===
 # F.Thiebolt    nov.23  initial release
 #
 
@@ -24,7 +28,7 @@ targetDIR="/etc/systemd/system/"
 
 
 
-
+set
 printenv
 
 
