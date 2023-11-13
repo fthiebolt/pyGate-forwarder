@@ -54,7 +54,7 @@ and TADA, it works! (at least it ought to ;)
 ### systemd service ###
 We'd like to have our packet forwarder to get launch as a systemd service
 ```
-./deploy.sh
+./setup.sh
 ```
 To launch the service `systemctm enable --now lora_pkt_fwd.service`
 
