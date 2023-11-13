@@ -31,6 +31,8 @@ fi
 
 
 echo -e "#\n#\tGIT-PUSH | push script revision ${_SCRIPTREV:-'unknown'}\n#"
+echo -e "#\t(script source https://fthiebolt@bitbucket.org/fthiebolt/myhelpscripts.git)\n#"
+
 
 if [ "$#" == "0" ]; then
     msg='update'

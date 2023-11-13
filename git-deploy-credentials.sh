@@ -16,6 +16,6 @@ _CREDSSCRIPTREV="231111"
 #export GIT_DEPLOY_TOKEN="<token>"
 
 # github
-export GIT_DEPLOY_USERNAME="fthiebolt"
+#export GIT_DEPLOY_USERNAME="fthiebolt"
 #export GIT_DEPLOY_TOKEN="<token>"
 

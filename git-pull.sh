@@ -28,6 +28,8 @@ fi
 
 
 echo -e "#\n#\tGIT-PULL | deploy script revision ${_SCRIPTREV:-'unknown'}\n#"
+echo -e "#\t(script source https://fthiebolt@bitbucket.org/fthiebolt/myhelpscripts.git)\n#"
+
 
 # Git related variables définitions
 #GIT_REPOSITORY=$(git config --local remote.origin.url|sed -n 's#.*/\([^.]*\)\.git#\1#p')
