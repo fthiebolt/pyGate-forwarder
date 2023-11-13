@@ -5,7 +5,7 @@
 # Notes:
 # ===
 # TODO:
-# - regex with tokens to get taken into account
+# - regex with tokens to take into account
 # ===
 # F.Thiebolt    sep.23  adaptation to gitlab URLs
 # F.Thiebolt    2016    initial release
@@ -69,7 +69,7 @@ else
 
     if [[ ${_git_hostname} != github* ]]; then
         _cmd="git remote set-url origin ${_git_remote_url}"
-        echo -e "Set REMOTE pull url:\n\t${_cmd}"
+        echo -e "Set REMOTE pull URL:\n\t${_cmd}"
         ${_cmd}
         [ $? -ne 0 ] && { echo -e "\n###ERROR: unable to set GIT remote url for repository '${_git_remote_url}' !!" >&2; exit 1; }
     fi
