@@ -62,7 +62,7 @@ _git_remote_url="https://${_git_hostname}/${_git_path}"
 
 [ ${DEBUG:-0} -eq 1 ] && { env; }
 
-if [[ ${_git_hostname} != "github*" ]]; then
+if [[ ${_git_hostname} != github* ]]; then
     git remote set-url --push origin ${_git_remote_url}
     [ $? -ne 0 ] && { echo -e "\n###ERROR: unable to set GIT remote url for repository '${_git_remote_url}' !!" >&2; exit 1; }
 fi
