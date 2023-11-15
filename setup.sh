@@ -2,11 +2,14 @@
 #
 # Deploy project as a systemd service
 #
-#   Note: we'll set the service file in /etc/systemd/system/
+# ===
+# Notes
+#   - with tmux2.6, service won't start without RemainAfterExit=yes
+#   - we'll set the service file in /etc/systemd/system/
+#   - we were currently running on a Buster/sid on Jetson nano (2020)
 # ===
 # Links
 #   - https://gist.github.com/lionell/34c6d2bc58df11462fb73d034b2d21d1
-#   - https://superuser.com/questions/1581577/running-two-tmux-sessions-as-systemd-service/1582196#1582196
 #   - https://superuser.com/questions/1581577/running-two-tmux-sessions-as-systemd-service
 #   - https://www.tecmint.com/create-systemd-service-linux/
 # ===
@@ -15,6 +18,10 @@
 
 ###
 # Variables for users' customization
+_debug=0
+
+_startNow=0
+
 #BaseDir="_$(basename ${BASH_SOURCE[0]})"
 _currentDir=$(dirname -- "$(readlink -f "${BASH_SOURCE}")")
 serviceName=""
@@ -22,8 +29,9 @@ serviceName=""
 targetDir="/etc/systemd/system"
 [ -d ${targetDir} ] || { echo -e "\n###ERROR: targetdir '${targetDir}' does not exists ... abort!" >&2; exit 1; } 
 
-#_cmd="cd ${_currentDir} && ./reset_pygate.py && cd packet_forwarder/lora_pkt_fwd && ./lora_pkt_fwd"
-_cmd="cd ${_currentDir}/packet_forwarder/lora_pkt_fwd; ls -l; sleep 180"
+_cmd="cd ${_currentDir} && ./reset_pygate.py && cd packet_forwarder/lora_pkt_fwd && ./lora_pkt_fwd"
+#_cmd="date; cd ${_currentDir}; ls -l; sleep 45"
+# _startNow=1
 
 # Debug mode
 [ "X${_debug}" = "X1" ] && { echo -e "\nDEBUG mode activated for ${BASH_SOURCE[0]} script"; set -x; }
@@ -54,23 +62,41 @@ echo -e "#"
 cat > ${serviceFile} << EOF
 [Unit]
 Description=${serviceName} LoRaWAN service
+After=network-online.target
+Wants=network-online.target
 
 [Service]
+#Type=oneshot
 Type=forking
+RemainAfterExit=yes
 User=root
 ExecStart=/usr/bin/tmux -f /root/.tmux.conf new-session -s ${serviceName} -d '${_cmd}'
-ExecStop=/usr/bin/tmux kill-session -t ${serviceName}
+ExecStop=/usr/bin/tmux -f /root/.tmux.conf kill-session -t ${serviceName}
 
 [Install]
 WantedBy=multi-user.target
 EOF
-
+chmod a-x ${serviceFile}
 cat ${serviceFile}
 
-# TO BE CONTINUED
+# launch service
 systemctl daemon-reload
+systemctl disable --now ${serviceName}
 systemctl enable ${serviceName}
-systemctl restart ${serviceName}
+
+# do we start immediately ?
+if [ "X${_startNow}" == "X1" ]; then
+    systemctl start ${serviceName}
+    sleep 1
+    systemctl -q is-active ${serviceName} >& /dev/null
+    [ $? -ne 0 ] && { echo -e "\n###ERROR: service '${serviceName}' does not start ?!?! ... abort!" >&2; exit 1; }
+
+    echo -e "#\n# service '${serviceName}' started in a tmux session\n"
+    tmux ls
+else
+    echo -e "#\n# service '${serviceName}' enabled to start upon next reboot."
+    echo -e "\n\tfor an immediate start of service:\n\t\tsystemctl start ${serviceName}"
+fi
 
 # cancel debug mode ?
 [ "X${_debug}" = "X1" ] && { set +x; }
