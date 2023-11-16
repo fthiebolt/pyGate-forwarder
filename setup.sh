@@ -13,6 +13,10 @@
 #   - https://superuser.com/questions/1581577/running-two-tmux-sessions-as-systemd-service
 #   - https://www.tecmint.com/create-systemd-service-linux/
 # ===
+# TODO
+#   - enable service to restart on failure
+#   - check drift to then exit if value too large
+# ===
 # F.Thiebolt    nov.23  initial release
 #
 

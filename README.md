@@ -52,10 +52,11 @@ and TADA, it works! (at least it ought to ;)
 ![nano-pygate connected to our LoRaWAN server](pics/Jetson-nano-PyGate-lorawan-server_jan21.jpg)
 
 ### systemd service ###
-We'd like to have our packet forwarder to get launch as a systemd service
+To start our packet forwarder as a systemd service
 ```
 ./setup.sh
 ```
-To launch the service `systemctm enable --now lora_pkt_fwd.service`
+then reboot!
+... or launch it directly `systemctl start pyGate-forwarder.service`
 
 
