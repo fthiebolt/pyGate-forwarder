@@ -29,9 +29,9 @@ serviceName=""
 targetDir="/etc/systemd/system"
 [ -d ${targetDir} ] || { echo -e "\n###ERROR: targetdir '${targetDir}' does not exists ... abort!" >&2; exit 1; } 
 
-_cmd="cd ${_currentDir}; ./reset_pygate.py; cd packet_forwarder/lora_pkt_fwd; ./lora_pkt_fwd"
+_cmd="date; sleep 10; cd ${_currentDir}; ./reset_pygate.py; cd packet_forwarder/lora_pkt_fwd; ./lora_pkt_fwd"
 #_cmd="date; cd ${_currentDir}; ls -l; sleep 180"
-_startNow=1
+#_startNow=1
 
 # Debug mode
 [ "X${_debug}" = "X1" ] && { echo -e "\nDEBUG mode activated for ${BASH_SOURCE[0]} script"; set -x; }
@@ -62,16 +62,18 @@ echo -e "#"
 cat > ${serviceFile} << EOF
 [Unit]
 Description=${serviceName} LoRaWAN service
-After=network-online.target
-Wants=network-online.target
+#After=network-online.target
+After=network.target
+#Wants=network-online.target
 
 [Service]
 #Type=oneshot
-Type=forking
+#Type=forking
 RemainAfterExit=yes
 User=root
 ExecStart=/usr/bin/tmux -f /root/.tmux.conf new-session -s ${serviceName} -d '${_cmd}'
 ExecStop=/usr/bin/tmux -f /root/.tmux.conf kill-session -t ${serviceName}
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
